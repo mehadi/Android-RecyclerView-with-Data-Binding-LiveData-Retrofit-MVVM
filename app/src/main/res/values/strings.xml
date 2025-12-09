@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">DataBinding</string>
+    <string name="app_name">Users App</string>
+    <string name="empty_state_title">No Users Found</string>
+    <string name="empty_state_message">Pull down to refresh or check your connection</string>
+    <string name="empty_state_description">Empty state icon</string>
+    <string name="error_state_description">Error icon</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Loading users…</string>
+    <string name="error_loading_users">Failed to load users. Please try again.</string>
+    <string name="user_avatar">User avatar</string>
+    <string name="username_icon">Username icon</string>
+    <string name="email_icon">Email icon</string>
 </resources>
