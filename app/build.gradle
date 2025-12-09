@@ -1,14 +1,16 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 android {
     namespace = 'me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding'
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -23,21 +25,16 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    dataBinding{
-        //noinspection DataBindingWithoutKapt
-        enabled = true
+        jvmTarget = "17"
     }
     buildFeatures {
-        viewBinding true
-    }
-    buildFeatures {
-        buildConfig true
+        dataBinding = true
+        viewBinding = true
+        buildConfig = true
     }
 
 }
@@ -46,40 +43,58 @@ android {
 dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.activity:activity:1.8.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-
-    // google support library ---------------------------------------------------------------------
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
+    
+    // Core AndroidX libraries (2025 latest)
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+    implementation 'androidx.activity:activity:1.9.2'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    
+    // Google Material Design 3 (2025 latest)
+    implementation 'com.google.android.material:material:1.12.0'
+    
+    // RecyclerView and CardView
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    
+    // Legacy support
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
 
+    // ViewModel and LiveData (2025 latest)
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.8.6"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.8.6"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.8.6"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.8.6"
+    // Note: lifecycle-extensions is deprecated, using individual lifecycle components instead
 
-    // ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.7.0"
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    //noinspection LifecycleAnnotationProcessorWithJava8
-    annotationProcessor "androidx.lifecycle:lifecycle-common-java8:2.7.0"
+    // Dependency Injection - Hilt (2025 latest)
+    implementation "com.google.dagger:hilt-android:2.52"
+    kapt "com.google.dagger:hilt-compiler:2.52"
+
+    // Coroutines (2025 latest)
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.9.0"
 
     /**
-     * Retrofit
+     * Retrofit and Networking (2025 latest)
      */
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okio:okio:3.6.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
-    implementation "com.squareup.retrofit2:adapter-rxjava2:2.3.0"
+    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    implementation 'com.squareup.okio:okio:3.9.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
 
+    // Testing (2025 latest)
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0"
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation "com.google.dagger:hilt-android-testing:2.52"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:2.52"
 
 }

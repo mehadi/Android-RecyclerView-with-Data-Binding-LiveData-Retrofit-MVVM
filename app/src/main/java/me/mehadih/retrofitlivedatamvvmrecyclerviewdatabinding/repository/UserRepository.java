@@ -1,52 +1,65 @@
 package me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.repository;
 
-import android.app.Application;
+import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.api.ApiRequestData;
-import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.api.RetroServer;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.api.ApiService;
 import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.model.User;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.util.Result;
 
 /**
- * Created By - Mehadi
- * Created On - 2/6/2020 : 1:14 PM
- * Email - hi@mehadih.me
- * Website - www.mehadih.me
+ * Repository pattern implementation with proper error handling
+ * Uses dependency injection and Result wrapper for type-safe error handling (2025 best practice)
  */
+@Singleton
 public class UserRepository {
+    private static final String TAG = "UserRepository";
+    private final ApiService apiService;
+    private final MutableLiveData<Result<List<User>>> usersLiveData = new MutableLiveData<>();
 
-    private ArrayList<User> userArrayList = new ArrayList<>();
-    private MutableLiveData<List<User>> mutableLiveData = new MutableLiveData<>();
-    private Application application;
-
-    public UserRepository(Application application) {
-        this.application = application;
+    @Inject
+    public UserRepository(ApiService apiService) {
+        this.apiService = apiService;
     }
 
+    /**
+     * Fetches users from the API
+     * Returns LiveData with Result wrapper for proper state management
+     */
+    public LiveData<Result<List<User>>> getUsers() {
+        // Set loading state (use postValue for thread safety)
+        usersLiveData.postValue(new Result.Loading<>());
 
-    public MutableLiveData<List<User>> getUsers() {
-        ApiRequestData apiService = RetroServer.getRetrofitServer();
-        Call<List<User>> call = apiService.getUsers();
-        call.enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                if (response.body() != null) {
-                    userArrayList = (ArrayList<User>) response.body();
-                    mutableLiveData.setValue(userArrayList);
-                }
+        // Fetch data asynchronously
+        Future<Result<List<User>>> future = apiService.getUsersAsync();
+        
+        // Handle result on background thread
+        new Thread(() -> {
+            try {
+                Result<List<User>> result = future.get();
+                usersLiveData.postValue(result);
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e(TAG, "Error getting users", e);
+                usersLiveData.postValue(new Result.Error<>(e));
             }
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-            }
-        });
-        return mutableLiveData;
+        }).start();
+
+        return usersLiveData;
     }
 
+    /**
+     * Refreshes the user list
+     */
+    public void refreshUsers() {
+        getUsers();
+    }
 }

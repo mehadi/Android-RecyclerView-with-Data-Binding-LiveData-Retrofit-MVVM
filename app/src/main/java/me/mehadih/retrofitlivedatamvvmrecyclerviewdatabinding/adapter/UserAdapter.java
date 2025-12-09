@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -34,8 +35,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        User currentUser = users.get(position);
-        holder.itemUserBinding.setUser(currentUser);
+        if (users != null && position >= 0 && position < users.size()) {
+            User currentUser = users.get(position);
+            holder.itemUserBinding.setUser(currentUser);
+        }
     }
 
     @Override
@@ -47,12 +50,32 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
     }
 
-    public void setUserList(ArrayList<User> users) {
-        this.users = users;
-        notifyDataSetChanged();
+    /**
+     * Updates the user list using DiffUtil for efficient updates (2025 best practice)
+     * Only animates and updates changed items instead of refreshing the entire list
+     */
+    public void setUserList(ArrayList<User> newUsers) {
+        if (users == null) {
+            users = new ArrayList<>();
+            if (newUsers != null) {
+                users.addAll(newUsers);
+            }
+            notifyItemRangeInserted(0, users.size());
+        } else {
+            UserDiffCallback diffCallback = new UserDiffCallback(users, newUsers);
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+            users.clear();
+            if (newUsers != null) {
+                users.addAll(newUsers);
+            }
+            diffResult.dispatchUpdatesTo(this);
+        }
     }
     public User getCurrentItemAt(int position) {
-        return users.get(position);
+        if (users != null && position >= 0 && position < users.size()) {
+            return users.get(position);
+        }
+        return null;
     }
 
     public class UserViewHolder extends RecyclerView.ViewHolder {

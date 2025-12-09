@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow HTTPS connections -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    
+    <!-- For development: Allow cleartext traffic only for specific domains if needed -->
+    <!-- Remove this in production -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">jsonplaceholder.typicode.com</domain>
+    </domain-config>
+</network-security-config>
+
