@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.model.User
-import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.GetUsersUseCase
+import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.ObserveUsersUseCase
 import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.RefreshUsersUseCase
 import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.ToggleFavoriteUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class UserListViewModel @Inject constructor(
-    getUsersUseCase: GetUsersUseCase,
+    observeUsersUseCase: ObserveUsersUseCase,
     private val refreshUsersUseCase: RefreshUsersUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel() {
@@ -31,7 +31,7 @@ class UserListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            combine(getUsersUseCase(), _searchQuery) { users, query -> users to query }
+            combine(observeUsersUseCase(), _searchQuery) { users, query -> users to query }
                 .collect { (users, query) ->
                     _uiState.update {
                         it.copy(

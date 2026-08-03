@@ -62,7 +62,7 @@ The app follows **Clean Architecture**, layered as plain Kotlin packages inside 
                                     │
 ┌───────────────────────────────────┼──────────────────────────────────────────┐
 │                                domain/                                       │
-│  GetUsersUseCase · GetUserByIdUseCase · RefreshUsersUseCase                  │
+│  ObserveUsersUseCase · ObserveUserByIdUseCase · RefreshUsersUseCase          │
 │  ObserveFavoriteUsersUseCase · ToggleFavoriteUseCase · ClearCacheUseCase      │
 │  UserRepository (interface) · UserPreferencesRepository (interface) · User    │
 └──────────────────────────────────┬────────────────────────────────────────────┘
@@ -121,7 +121,7 @@ app/src/main/java/me/mehadih/retrofitlivedatamvvmrecyclerviewdatabinding/
 ├── domain/
 │   ├── model/              User.kt · ThemeMode.kt
 │   ├── repository/         UserRepository.kt · UserPreferencesRepository.kt
-│   └── usecase/            GetUsersUseCase · GetUserByIdUseCase · RefreshUsersUseCase
+│   └── usecase/            ObserveUsersUseCase · ObserveUserByIdUseCase · RefreshUsersUseCase
 │                            ObserveFavoriteUsersUseCase · ToggleFavoriteUseCase · ClearCacheUseCase
 │
 ├── data/
@@ -244,6 +244,16 @@ buildConfigField "String", "BASE_URL", '"https://your-api-url.com/"'
 - ✅ **Single source of truth** — Room, not the network, is what the UI observes; DataStore is the single source of truth for preferences
 - ✅ **Kotlin idioms** — `sealed`/`data class`es, `Flow`/`StateFlow`, `Result<T>` for fallible operations, no platform `!!` or nullable-Java carryover
 - ✅ **R8/ProGuard** — `minifyEnabled` + `shrinkResources` enabled for release builds
+- ✅ **Use-case naming reflects behavior** — the two `Flow`-returning use cases are named `ObserveUsersUseCase` / `ObserveUserByIdUseCase` (previously `Get*`, which implied a one-shot fetch), consistent with `ObserveFavoriteUsersUseCase`
+
+### DI/Architecture audit (Aug 2026)
+
+A full audit of the Hilt setup and layer boundaries — every ViewModel, repository binding, module scope, and use case — found the DI graph and Clean Architecture split already correct: constructor injection throughout, repositories bound via `@Binds` to interfaces, `@Singleton` limited to genuinely stateful/expensive types (Room `AppDatabase`, `Retrofit`/`OkHttpClient`, the two repository impls, the DataStore data source), and use cases correctly left unscoped as stateless wrappers. Two findings came out of it:
+
+- **Fixed** — the `Get*UseCase` naming above was corrected to `Observe*UseCase` (rename only; no behavior change), including the associated KDoc cross-references and the one test constructing `UserListViewModel`.
+- **Documented, not restructured** — `SettingsViewModel`, `OnboardingViewModel`, and `MainActivityViewModel` inject `UserPreferencesRepository` directly rather than through a use case. This is intentional: those are single-field preference reads/writes with no business rule to encapsulate, unlike favorites-toggling or cache-clearing. The rule is now spelled out in the KDoc on [`UserPreferencesRepository`](app/src/main/java/me/mehadih/retrofitlivedatamvvmrecyclerviewdatabinding/domain/repository/UserPreferencesRepository.kt) rather than papered over with thin pass-through use-case wrappers that would add indirection without a real benefit.
+
+No other DI/architecture issues were found. One unrelated, pre-existing gap was also fixed while touching this area: `UserListViewModelTest`'s `createViewModel()` helper was missing the `toggleFavoriteUseCase` constructor argument (the test file didn't compile).
 
 ---
 

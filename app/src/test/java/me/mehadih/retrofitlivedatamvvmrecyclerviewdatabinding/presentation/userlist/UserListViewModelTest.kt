@@ -7,8 +7,9 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.model.User
-import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.GetUsersUseCase
+import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.ObserveUsersUseCase
 import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.RefreshUsersUseCase
+import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.ToggleFavoriteUseCase
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -35,8 +36,9 @@ class UserListViewModelTest {
     }
 
     private fun createViewModel() = UserListViewModel(
-        getUsersUseCase = GetUsersUseCase(repository),
+        observeUsersUseCase = ObserveUsersUseCase(repository),
         refreshUsersUseCase = RefreshUsersUseCase(repository),
+        toggleFavoriteUseCase = ToggleFavoriteUseCase(repository),
     )
 
     @Test

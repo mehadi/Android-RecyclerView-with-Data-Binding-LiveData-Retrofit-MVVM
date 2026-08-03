@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.GetUserByIdUseCase
+import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.ObserveUserByIdUseCase
 import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.ToggleFavoriteUseCase
 import me.mehadih.retrofitlivedatamvvmrecyclerviewdatabinding.presentation.navigation.NavArgs
 import javax.inject.Inject
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UserDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    getUserByIdUseCase: GetUserByIdUseCase,
+    observeUserByIdUseCase: ObserveUserByIdUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel() {
 
@@ -30,14 +30,14 @@ class UserDetailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getUserByIdUseCase(userId).collect { user ->
+            observeUserByIdUseCase(userId).collect { user ->
                 _uiState.update { it.copy(user = user, isLoading = false) }
             }
         }
     }
 
     /** Flips the current user's favorite flag. The UI reflects the change once the
-     *  repository emits the updated user through [getUserByIdUseCase]. */
+     *  repository emits the updated user through [observeUserByIdUseCase]. */
     fun onToggleFavorite() {
         val currentUser = _uiState.value.user ?: return
         viewModelScope.launch {
