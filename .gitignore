@@ -3,3 +3,7 @@
 
 # Ignore Gradle build files
 .gradle/
+build/
+
+# Local configuration file (contains machine-specific SDK path)
+local.properties

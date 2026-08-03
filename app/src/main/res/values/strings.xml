@@ -1,13 +1,66 @@
 <resources>
     <string name="app_name">Users App</string>
-    <string name="empty_state_title">No Users Found</string>
+    <string name="empty_state_title">No users found</string>
     <string name="empty_state_message">Pull down to refresh or check your connection</string>
-    <string name="empty_state_description">Empty state icon</string>
-    <string name="error_state_description">Error icon</string>
     <string name="retry">Retry</string>
-    <string name="loading">Loading users…</string>
-    <string name="error_loading_users">Failed to load users. Please try again.</string>
-    <string name="user_avatar">User avatar</string>
-    <string name="username_icon">Username icon</string>
-    <string name="email_icon">Email icon</string>
+
+    <string name="open_user_details">Open details for %1$s</string>
+    <string name="back">Back</string>
+    <string name="user_detail_title">User details</string>
+    <string name="email_icon_label">Email</string>
+    <string name="phone_icon_label">Phone</string>
+    <string name="website_icon_label">Website</string>
+    <string name="company_icon_label">Company</string>
+    <string name="email_user">Email %1$s</string>
+    <string name="user_not_found">This user could not be found.</string>
+
+    <string name="user_detail_section_contact">Contact</string>
+    <string name="user_detail_section_web">Web</string>
+    <string name="user_detail_section_company">Company</string>
+
+    <string name="add_to_favorites">Add %1$s to favorites</string>
+    <string name="remove_from_favorites">Remove %1$s from favorites</string>
+    <string name="search_users_placeholder">Search by name, username, or email</string>
+    <string name="search_users_clear">Clear search</string>
+    <string name="search_no_results_title">No matches</string>
+    <string name="search_no_results_message">No users match \"%1$s\". Try a different search.</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_section_data">Data</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_theme_label">Theme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_dynamic_color_label">Dynamic color</string>
+    <string name="settings_dynamic_color_description">Use colors from your wallpaper</string>
+    <string name="settings_clear_cache_label">Clear cache</string>
+    <string name="settings_clear_cache_description">Remove locally saved users and refresh from the network</string>
+    <string name="settings_clear_cache_dialog_title">Clear cache?</string>
+    <string name="settings_clear_cache_dialog_message">This deletes the locally cached users. They\'ll be downloaded again the next time the list refreshes.</string>
+    <string name="settings_clear_cache_confirm">Clear</string>
+    <string name="settings_clear_cache_cancel">Cancel</string>
+    <string name="settings_version_label">Version</string>
+    <string name="settings_about_attribution">User data is provided by the JSONPlaceholder public API.</string>
+
+    <string name="onboarding_page1_headline">Browse a community of people</string>
+    <string name="onboarding_page1_body">Discover profiles from a growing community, all in one place.</string>
+    <string name="onboarding_page2_headline">Search and favorite the ones you care about</string>
+    <string name="onboarding_page2_body">Quickly search for people and save your favorites for easy access.</string>
+    <string name="onboarding_page3_headline">Works offline</string>
+    <string name="onboarding_page3_body">Your list is always cached, so you can keep browsing without a connection.</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_page_indicator">Page %1$d of %2$d</string>
+
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_favorites">Favorites</string>
+    <string name="bottom_nav_settings">Settings</string>
+
+    <string name="favorites_title">Favorites</string>
+    <string name="favorites_empty_title">No favorites yet</string>
+    <string name="favorites_empty_message">Tap the heart on someone\'s profile to keep them handy here.</string>
+    <string name="favorites_browse_button">Browse people</string>
 </resources>
