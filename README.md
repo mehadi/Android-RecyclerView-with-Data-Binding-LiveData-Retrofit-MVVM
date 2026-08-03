@@ -14,6 +14,7 @@ A modern Android application demonstrating **Jetpack Compose**, **Clean Architec
 <tr>
 <td><img src="screenshots/home.png" width="280" alt="User list screen"/></td>
 <td><img src="screenshots/detail.png" width="280" alt="User detail screen"/></td>
+<td><img src="screenshots/setting.png" width="280" alt="Settings screen"/></td>
 </tr>
 </table>
 
