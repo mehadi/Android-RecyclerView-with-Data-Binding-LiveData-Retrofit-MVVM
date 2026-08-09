@@ -23,11 +23,12 @@ fun UserAvatar(
     size: Dp = 48.dp,
 ) {
     Box(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .clearAndSetSemantics { },
+        modifier =
+            modifier
+                .size(size)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .clearAndSetSemantics { },
         contentAlignment = Alignment.Center,
     ) {
         Text(

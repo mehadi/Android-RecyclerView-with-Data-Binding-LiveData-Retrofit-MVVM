@@ -75,23 +75,24 @@ private data class OnboardingPageUi(
     val bodyRes: Int,
 )
 
-private val onboardingPages = listOf(
-    OnboardingPageUi(
-        icon = Icons.Outlined.Groups,
-        headlineRes = R.string.onboarding_page1_headline,
-        bodyRes = R.string.onboarding_page1_body,
-    ),
-    OnboardingPageUi(
-        icon = Icons.Outlined.FavoriteBorder,
-        headlineRes = R.string.onboarding_page2_headline,
-        bodyRes = R.string.onboarding_page2_body,
-    ),
-    OnboardingPageUi(
-        icon = Icons.Outlined.CloudOff,
-        headlineRes = R.string.onboarding_page3_headline,
-        bodyRes = R.string.onboarding_page3_body,
-    ),
-)
+private val onboardingPages =
+    listOf(
+        OnboardingPageUi(
+            icon = Icons.Outlined.Groups,
+            headlineRes = R.string.onboarding_page1_headline,
+            bodyRes = R.string.onboarding_page1_body,
+        ),
+        OnboardingPageUi(
+            icon = Icons.Outlined.FavoriteBorder,
+            headlineRes = R.string.onboarding_page2_headline,
+            bodyRes = R.string.onboarding_page2_body,
+        ),
+        OnboardingPageUi(
+            icon = Icons.Outlined.CloudOff,
+            headlineRes = R.string.onboarding_page3_headline,
+            bodyRes = R.string.onboarding_page3_body,
+        ),
+    )
 
 /**
  * Stateless first-run onboarding flow. Manages its own pager position as transient UI state;
@@ -115,29 +116,32 @@ fun OnboardingScreen(
 
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
         ) { page ->
             OnboardingPageContent(
                 page = onboardingPages[page],
-                modifier = Modifier.graphicsLayer {
-                    val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
-                    val fraction = pageOffset.absoluteValue.coerceIn(0f, 1f)
-                    alpha = 1f - (fraction * 0.6f)
-                    val scale = 1f - (fraction * 0.15f)
-                    scaleX = scale
-                    scaleY = scale
-                },
+                modifier =
+                    Modifier.graphicsLayer {
+                        val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+                        val fraction = pageOffset.absoluteValue.coerceIn(0f, 1f)
+                        alpha = 1f - (fraction * 0.6f)
+                        val scale = 1f - (fraction * 0.15f)
+                        scaleX = scale
+                        scaleY = scale
+                    },
             )
         }
 
         PageIndicator(
             pageCount = onboardingPages.size,
             currentPage = pagerState.currentPage,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = Spacing.lg),
+            modifier =
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = Spacing.lg),
         )
 
         Button(
@@ -148,29 +152,31 @@ fun OnboardingScreen(
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(
                             page = pagerState.currentPage + 1,
-                            animationSpec = tween(MotionDuration.Medium, easing = MotionEasing.Standard),
+                            animationSpec = tween(MotionDuration.MEDIUM, easing = MotionEasing.Standard),
                         )
                     }
                 }
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Spacing.lg)
-                .padding(bottom = Spacing.xl),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.lg)
+                    .padding(bottom = Spacing.xl),
         ) {
             AnimatedContent(
                 targetState = isLastPage,
                 transitionSpec = {
-                    fadeIn(tween(MotionDuration.Short)) togetherWith fadeOut(tween(MotionDuration.Short))
+                    fadeIn(tween(MotionDuration.SHORT)) togetherWith fadeOut(tween(MotionDuration.SHORT))
                 },
                 label = "onboardingButtonLabel",
             ) { lastPage ->
                 Text(
-                    text = if (lastPage) {
-                        stringResource(R.string.onboarding_get_started)
-                    } else {
-                        stringResource(R.string.onboarding_next)
-                    },
+                    text =
+                        if (lastPage) {
+                            stringResource(R.string.onboarding_get_started)
+                        } else {
+                            stringResource(R.string.onboarding_next)
+                        },
                 )
             }
         }
@@ -189,17 +195,18 @@ private fun SkipButton(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            // A minimum rather than exact height, so the "Skip" label doesn't get squeezed or
-            // clipped when the system font scale is increased.
-            .heightIn(min = 56.dp)
-            .padding(end = Spacing.md),
+        modifier =
+            modifier
+                // A minimum rather than exact height, so the "Skip" label doesn't get squeezed or
+                // clipped when the system font scale is increased.
+                .heightIn(min = 56.dp)
+                .padding(end = Spacing.md),
         contentAlignment = Alignment.CenterEnd,
     ) {
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(tween(MotionDuration.Short)),
-            exit = fadeOut(tween(MotionDuration.Short)),
+            enter = fadeIn(tween(MotionDuration.SHORT)),
+            exit = fadeOut(tween(MotionDuration.SHORT)),
         ) {
             TextButton(onClick = onSkip) {
                 Text(stringResource(R.string.onboarding_skip))
@@ -214,9 +221,10 @@ private fun OnboardingPageContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = Spacing.xl),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = Spacing.xl),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -243,10 +251,11 @@ private fun OnboardingIcon(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .size(160.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primaryContainer),
+        modifier =
+            modifier
+                .size(160.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -270,11 +279,12 @@ private fun PageIndicator(
     // even though the indicator itself never takes accessibility focus.
     val pageDescription = stringResource(R.string.onboarding_page_indicator, currentPage + 1, pageCount)
     Row(
-        modifier = modifier
-            .semantics(mergeDescendants = true) {
-                contentDescription = pageDescription
-                liveRegion = LiveRegionMode.Polite
-            },
+        modifier =
+            modifier
+                .semantics(mergeDescendants = true) {
+                    contentDescription = pageDescription
+                    liveRegion = LiveRegionMode.Polite
+                },
         horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -282,24 +292,26 @@ private fun PageIndicator(
             val selected = index == currentPage
             val width by animateDpAsState(
                 targetValue = if (selected) 24.dp else 8.dp,
-                animationSpec = tween(MotionDuration.Medium, easing = MotionEasing.Standard),
+                animationSpec = tween(MotionDuration.MEDIUM, easing = MotionEasing.Standard),
                 label = "indicatorWidth",
             )
             val color by animateColorAsState(
-                targetValue = if (selected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.surfaceVariant
-                },
-                animationSpec = tween(MotionDuration.Medium, easing = MotionEasing.Standard),
+                targetValue =
+                    if (selected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+                animationSpec = tween(MotionDuration.MEDIUM, easing = MotionEasing.Standard),
                 label = "indicatorColor",
             )
             Box(
-                modifier = Modifier
-                    .height(8.dp)
-                    .width(width)
-                    .clip(CircleShape)
-                    .background(color),
+                modifier =
+                    Modifier
+                        .height(8.dp)
+                        .width(width)
+                        .clip(CircleShape)
+                        .background(color),
             )
         }
     }

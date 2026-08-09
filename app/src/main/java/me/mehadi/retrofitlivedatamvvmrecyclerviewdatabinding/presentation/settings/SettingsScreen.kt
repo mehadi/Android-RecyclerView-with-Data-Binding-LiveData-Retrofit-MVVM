@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Palette
@@ -22,7 +21,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -46,14 +44,10 @@ import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.model.ThemeM
 import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.presentation.theme.Spacing
 
 @Composable
-fun SettingsRoute(
-    onBack: () -> Unit,
-    viewModel: SettingsViewModel = hiltViewModel(),
-) {
+fun SettingsRoute(viewModel: SettingsViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     SettingsScreen(
         uiState = uiState,
-        onBack = onBack,
         onThemeModeSelected = viewModel::setThemeMode,
         onDynamicColorToggle = viewModel::setDynamicColorEnabled,
         onClearCacheClick = viewModel::onClearCacheClick,
@@ -67,7 +61,6 @@ fun SettingsRoute(
 @Composable
 fun SettingsScreen(
     uiState: SettingsUiState,
-    onBack: () -> Unit,
     onThemeModeSelected: (ThemeMode) -> Unit,
     onDynamicColorToggle: (Boolean) -> Unit,
     onClearCacheClick: () -> Unit,
@@ -78,17 +71,8 @@ fun SettingsScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back),
-                        )
-                    }
-                },
-            )
+            // Settings is a top-level bottom-nav tab, so there is no "up" to navigate to.
+            TopAppBar(title = { Text(stringResource(R.string.settings_title)) })
         },
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
@@ -156,11 +140,12 @@ private fun AppearanceSection(
                 // Making the whole row toggleable merges the headline/description text and the
                 // switch's checked state into a single, correctly-labeled accessibility node, and
                 // also grows the touch target from the 40dp switch to the full-width row.
-                modifier = Modifier.toggleable(
-                    value = dynamicColorEnabled,
-                    onValueChange = onDynamicColorToggle,
-                    role = Role.Switch,
-                ),
+                modifier =
+                    Modifier.toggleable(
+                        value = dynamicColorEnabled,
+                        onValueChange = onDynamicColorToggle,
+                        role = Role.Switch,
+                    ),
                 headlineContent = { Text(stringResource(R.string.settings_dynamic_color_label)) },
                 supportingContent = { Text(stringResource(R.string.settings_dynamic_color_description)) },
                 leadingContent = {
@@ -197,11 +182,12 @@ private fun ThemeModePicker(
     }
 }
 
-private fun ThemeMode.labelRes(): Int = when (this) {
-    ThemeMode.SYSTEM -> R.string.settings_theme_system
-    ThemeMode.LIGHT -> R.string.settings_theme_light
-    ThemeMode.DARK -> R.string.settings_theme_dark
-}
+private fun ThemeMode.labelRes(): Int =
+    when (this) {
+        ThemeMode.SYSTEM -> R.string.settings_theme_system
+        ThemeMode.LIGHT -> R.string.settings_theme_light
+        ThemeMode.DARK -> R.string.settings_theme_dark
+    }
 
 @Composable
 private fun DataSection(

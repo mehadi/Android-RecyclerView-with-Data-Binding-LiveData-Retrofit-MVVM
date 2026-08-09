@@ -3,20 +3,22 @@ package me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.presentation.userl
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.test.platform.app.InstrumentationRegistry
+import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.R
 import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.model.User
 import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.presentation.theme.UsersAppTheme
 import org.junit.Rule
 import org.junit.Test
 
 class UserListScreenTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val sampleUsers = listOf(
-        User(id = 1, name = "Ada Lovelace", username = "ada", email = "ada@example.com"),
-        User(id = 2, name = "Alan Turing", username = "alan", email = "alan@example.com"),
-    )
+    private val sampleUsers =
+        listOf(
+            User(id = 1, name = "Ada Lovelace", username = "ada", email = "ada@example.com"),
+            User(id = 2, name = "Alan Turing", username = "alan", email = "alan@example.com"),
+        )
 
     @Test
     fun displaysUsersWhenLoaded() {
@@ -56,11 +58,12 @@ class UserListScreenTest {
         composeTestRule.setContent {
             UsersAppTheme {
                 UserListScreen(
-                    uiState = UserListUiState(
-                        users = emptyList(),
-                        isLoading = false,
-                        errorMessage = "Network unavailable",
-                    ),
+                    uiState =
+                        UserListUiState(
+                            users = emptyList(),
+                            isLoading = false,
+                            errorMessageRes = R.string.error_no_connection,
+                        ),
                     onRefresh = {},
                     onUserClick = {},
                     onErrorShown = {},
@@ -68,7 +71,12 @@ class UserListScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Network unavailable").assertIsDisplayed()
+        val expected =
+            InstrumentationRegistry
+                .getInstrumentation()
+                .targetContext
+                .getString(R.string.error_no_connection)
+        composeTestRule.onNodeWithText(expected).assertIsDisplayed()
     }
 
     @Test

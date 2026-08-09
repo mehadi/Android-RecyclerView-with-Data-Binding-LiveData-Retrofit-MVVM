@@ -17,23 +17,25 @@ import javax.inject.Inject
  * destination).
  */
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(
-    userPreferencesRepository: UserPreferencesRepository,
-) : ViewModel() {
-
-    val uiState: StateFlow<MainActivityUiState> = combine(
-        userPreferencesRepository.themeMode,
-        userPreferencesRepository.dynamicColorEnabled,
-        userPreferencesRepository.onboardingSeen,
-    ) { themeMode, dynamicColorEnabled, onboardingSeen ->
-        MainActivityUiState.Ready(
-            themeMode = themeMode,
-            dynamicColorEnabled = dynamicColorEnabled,
-            onboardingSeen = onboardingSeen,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = MainActivityUiState.Loading,
-    )
-}
+class MainActivityViewModel
+    @Inject
+    constructor(
+        userPreferencesRepository: UserPreferencesRepository,
+    ) : ViewModel() {
+        val uiState: StateFlow<MainActivityUiState> =
+            combine(
+                userPreferencesRepository.themeMode,
+                userPreferencesRepository.dynamicColorEnabled,
+                userPreferencesRepository.onboardingSeen,
+            ) { themeMode, dynamicColorEnabled, onboardingSeen ->
+                MainActivityUiState.Ready(
+                    themeMode = themeMode,
+                    dynamicColorEnabled = dynamicColorEnabled,
+                    onboardingSeen = onboardingSeen,
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = MainActivityUiState.Loading,
+            )
+    }

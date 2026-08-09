@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.PeopleOutline
 import androidx.compose.material.icons.outlined.SearchOff
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,7 +47,7 @@ import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.R
 import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.presentation.theme.MotionDuration
 import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.presentation.theme.Spacing
 
-private const val SkeletonRowCount = 6
+private const val SKELETON_ROW_COUNT = 6
 
 @Composable
 fun UserListLoading(modifier: Modifier = Modifier) {
@@ -56,29 +57,34 @@ fun UserListLoading(modifier: Modifier = Modifier) {
     // it, ~25 composables) on every animation frame. Passing the State<Float> handle down and
     // reading `.value` only inside graphicsLayer lambdas confines the per-frame cost to the
     // draw phase, so the shimmer animates without ever triggering recomposition.
-    val shimmerAlpha = transition.animateFloat(
-        initialValue = 0.35f,
-        targetValue = 0.85f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = MotionDuration.ExtraLong, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "skeleton_shimmer_alpha",
-    )
+    val shimmerAlpha =
+        transition.animateFloat(
+            initialValue = 0.35f,
+            targetValue = 0.85f,
+            animationSpec =
+                infiniteRepeatable(
+                    animation = tween(durationMillis = MotionDuration.EXTRA_LONG, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse,
+                ),
+            label = "skeleton_shimmer_alpha",
+        )
 
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = Spacing.md, vertical = Spacing.sm + Spacing.xs),
         verticalArrangement = Arrangement.spacedBy(Spacing.sm + Spacing.xs),
     ) {
-        items(SkeletonRowCount) {
+        items(SKELETON_ROW_COUNT) {
             UserListItemSkeleton(shimmerAlpha = shimmerAlpha)
         }
     }
 }
 
 @Composable
-private fun UserListItemSkeleton(shimmerAlpha: State<Float>, modifier: Modifier = Modifier) {
+private fun UserListItemSkeleton(
+    shimmerAlpha: State<Float>,
+    modifier: Modifier = Modifier,
+) {
     // Fixed base color/alpha; the animated component is applied per-frame via graphicsLayer
     // below instead of being baked into the Color, so this composable never needs to recompose.
     val shimmerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.24f)
@@ -89,17 +95,19 @@ private fun UserListItemSkeleton(shimmerAlpha: State<Float>, modifier: Modifier 
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Spacing.md),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(Spacing.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(CircleShape)
-                    .graphicsLayer { alpha = shimmerAlpha.value }
-                    .background(shimmerColor),
+                modifier =
+                    Modifier
+                        .size(52.dp)
+                        .clip(CircleShape)
+                        .graphicsLayer { alpha = shimmerAlpha.value }
+                        .background(shimmerColor),
             )
 
             Spacer(modifier = Modifier.width(Spacing.md))
@@ -116,14 +124,20 @@ private fun UserListItemSkeleton(shimmerAlpha: State<Float>, modifier: Modifier 
 }
 
 @Composable
-private fun ShimmerLine(width: Float, color: Color, alpha: State<Float>, modifier: Modifier = Modifier) {
+private fun ShimmerLine(
+    width: Float,
+    color: Color,
+    alpha: State<Float>,
+    modifier: Modifier = Modifier,
+) {
     Box(
-        modifier = modifier
-            .fillMaxWidth(fraction = width)
-            .height(12.dp)
-            .clip(MaterialTheme.shapes.extraSmall)
-            .graphicsLayer { this.alpha = alpha.value }
-            .background(color),
+        modifier =
+            modifier
+                .fillMaxWidth(fraction = width)
+                .height(12.dp)
+                .clip(MaterialTheme.shapes.extraSmall)
+                .graphicsLayer { this.alpha = alpha.value }
+                .background(color),
     )
 }
 
@@ -190,8 +204,45 @@ fun UserListError(
     }
 }
 
+/** Shown when the "Favorites only" filter is on but nothing has been favorited yet. */
 @Composable
-fun UserListSearchEmpty(query: String, modifier: Modifier = Modifier) {
+fun UserListFavoritesEmpty(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(Spacing.xl),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.StarOutline,
+            contentDescription = null,
+            modifier = Modifier.size(72.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Column(
+            modifier = Modifier.padding(top = Spacing.md),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(R.string.favorites_empty_title),
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+            )
+            Text(
+                text = stringResource(R.string.favorites_filter_empty_message),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = Spacing.sm),
+            )
+        }
+    }
+}
+
+@Composable
+fun UserListSearchEmpty(
+    query: String,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier.fillMaxSize().padding(Spacing.xl),
         horizontalAlignment = Alignment.CenterHorizontally,

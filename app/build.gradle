@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ktlint)
 }
 
 android {
@@ -17,12 +18,16 @@ android {
         versionCode = 2
         versionName = "2.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "BASE_URL", '"https://jsonplaceholder.typicode.com/"'
+        testInstrumentationRunner = "me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.HiltTestRunner"
     }
 
     buildTypes {
+        // Per-build-type so debug can be pointed at a staging/mock endpoint without touching release.
+        debug {
+            buildConfigField "String", "BASE_URL", '"https://jsonplaceholder.typicode.com/"'
+        }
         release {
+            buildConfigField "String", "BASE_URL", '"https://jsonplaceholder.typicode.com/"'
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -44,6 +49,11 @@ android {
         unitTests {
             includeAndroidResources = true
         }
+    }
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+        baseline = file("lint-baseline.xml")
     }
 }
 

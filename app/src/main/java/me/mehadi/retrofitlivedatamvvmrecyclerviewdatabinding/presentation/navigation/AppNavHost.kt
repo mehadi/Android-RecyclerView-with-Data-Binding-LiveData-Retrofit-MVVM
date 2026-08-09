@@ -4,12 +4,12 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -57,26 +57,28 @@ private data class BottomNavItem(
     val unselectedIcon: ImageVector,
 )
 
-private val bottomNavItems = listOf(
-    BottomNavItem(
-        route = Destinations.USER_LIST,
-        labelRes = R.string.bottom_nav_home,
-        selectedIcon = Icons.Filled.Home,
-        unselectedIcon = Icons.Outlined.Home,
-    ),
-    BottomNavItem(
-        route = Destinations.FAVORITES,
-        labelRes = R.string.bottom_nav_favorites,
-        selectedIcon = Icons.Filled.Favorite,
-        unselectedIcon = Icons.Outlined.FavoriteBorder,
-    ),
-    BottomNavItem(
-        route = Destinations.SETTINGS,
-        labelRes = R.string.bottom_nav_settings,
-        selectedIcon = Icons.Filled.Settings,
-        unselectedIcon = Icons.Outlined.Settings,
-    ),
-)
+private val bottomNavItems =
+    listOf(
+        BottomNavItem(
+            route = Destinations.USER_LIST,
+            labelRes = R.string.bottom_nav_home,
+            selectedIcon = Icons.Filled.Home,
+            unselectedIcon = Icons.Outlined.Home,
+        ),
+        BottomNavItem(
+            route = Destinations.FAVORITES,
+            labelRes = R.string.bottom_nav_favorites,
+            // Star (not heart) to match the favorite toggle icon used on list rows.
+            selectedIcon = Icons.Filled.Star,
+            unselectedIcon = Icons.Outlined.StarOutline,
+        ),
+        BottomNavItem(
+            route = Destinations.SETTINGS,
+            labelRes = R.string.bottom_nav_settings,
+            selectedIcon = Icons.Filled.Settings,
+            unselectedIcon = Icons.Outlined.Settings,
+        ),
+    )
 
 /** Destinations that own their own full-screen presentation and hide the bottom nav bar. */
 private val destinationsWithoutBottomBar = setOf(Destinations.ONBOARDING, Destinations.USER_DETAIL)
@@ -113,10 +115,11 @@ fun AppNavHost(startDestination: String = Destinations.USER_LIST) {
             startDestination = startDestination,
             // The padding above already reserves space for the bottom bar/system insets; consume
             // it so nested per-screen Scaffolds don't double-apply the same insets themselves.
-            modifier = Modifier
-                .padding(innerPadding)
-                .consumeWindowInsets(innerPadding)
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
+                    .fillMaxSize(),
         ) {
             composable(Destinations.ONBOARDING) {
                 OnboardingRoute(
@@ -150,7 +153,7 @@ fun AppNavHost(startDestination: String = Destinations.USER_LIST) {
             }
 
             composable(Destinations.SETTINGS) {
-                SettingsRoute(onBack = { navController.popBackStack() })
+                SettingsRoute()
             }
 
             composable(

@@ -9,9 +9,10 @@ import androidx.compose.ui.text.font.FontWeight
  */
 private val defaults = Typography()
 
-val AppTypography = Typography(
-    headlineMedium = defaults.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
-    titleLarge = defaults.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-    titleMedium = defaults.titleMedium.copy(fontWeight = FontWeight.Medium),
-    labelLarge = defaults.labelLarge.copy(fontWeight = FontWeight.Medium),
-)
+val AppTypography =
+    Typography(
+        headlineMedium = defaults.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
+        titleLarge = defaults.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+        titleMedium = defaults.titleMedium.copy(fontWeight = FontWeight.Medium),
+        labelLarge = defaults.labelLarge.copy(fontWeight = FontWeight.Medium),
+    )

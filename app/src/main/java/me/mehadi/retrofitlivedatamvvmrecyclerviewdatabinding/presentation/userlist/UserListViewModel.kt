@@ -13,76 +13,113 @@ import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.model.User
 import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.ObserveUsersUseCase
 import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.RefreshUsersUseCase
 import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.ToggleFavoriteUseCase
+import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.presentation.common.filterUsers
+import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.presentation.common.toMessageRes
 import javax.inject.Inject
 
 @HiltViewModel
-class UserListViewModel @Inject constructor(
-    observeUsersUseCase: ObserveUsersUseCase,
-    private val refreshUsersUseCase: RefreshUsersUseCase,
-    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-) : ViewModel() {
+class UserListViewModel
+    @Inject
+    constructor(
+        observeUsersUseCase: ObserveUsersUseCase,
+        private val refreshUsersUseCase: RefreshUsersUseCase,
+        private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    ) : ViewModel() {
+        private val _uiState = MutableStateFlow(UserListUiState())
+        val uiState: StateFlow<UserListUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(UserListUiState())
-    val uiState: StateFlow<UserListUiState> = _uiState.asStateFlow()
+        /** Client-side list controls; combined with the cached user list below so none of them
+         *  ever touch the network and only re-run the (cheap) filter/sort per change. */
+        private val searchQueryFlow = MutableStateFlow("")
+        private val sortOrderFlow = MutableStateFlow(UserSortOrder.NAME)
+        private val favoritesOnlyFlow = MutableStateFlow(false)
 
-    /** Client-side search query; combined with the cached user list below so filtering never
-     *  touches the network and only re-runs the (cheap) filter itself per keystroke. */
-    private val _searchQuery = MutableStateFlow("")
-
-    init {
-        viewModelScope.launch {
-            combine(observeUsersUseCase(), _searchQuery) { users, query -> users to query }
-                .collect { (users, query) ->
+        init {
+            viewModelScope.launch {
+                combine(
+                    observeUsersUseCase(),
+                    searchQueryFlow,
+                    sortOrderFlow,
+                    favoritesOnlyFlow,
+                ) { users, query, sortOrder, favoritesOnly ->
+                    ListControls(users, query, sortOrder, favoritesOnly)
+                }.collect { (users, query, sortOrder, favoritesOnly) ->
                     _uiState.update {
                         it.copy(
                             users = users,
                             searchQuery = query,
-                            filteredUsers = filterUsers(users, query),
+                            sortOrder = sortOrder,
+                            favoritesOnly = favoritesOnly,
+                            filteredUsers = visibleUsers(users, query, sortOrder, favoritesOnly),
                         )
                     }
                 }
-        }
-        refresh()
-    }
-
-    fun refresh() {
-        viewModelScope.launch {
-            val hasCachedUsers = _uiState.value.users.isNotEmpty()
-            _uiState.update {
-                it.copy(isLoading = !hasCachedUsers, isRefreshing = hasCachedUsers, errorMessage = null)
             }
+            refresh()
+        }
 
-            refreshUsersUseCase().onFailure { error ->
+        fun refresh() {
+            viewModelScope.launch {
+                val hasCachedUsers = _uiState.value.users.isNotEmpty()
                 _uiState.update {
-                    it.copy(errorMessage = error.message ?: "Couldn't refresh users. Showing the last saved list.")
+                    it.copy(isLoading = !hasCachedUsers, isRefreshing = hasCachedUsers, errorMessageRes = null)
                 }
+
+                refreshUsersUseCase().onFailure { error ->
+                    _uiState.update { it.copy(errorMessageRes = error.toMessageRes()) }
+                }
+
+                _uiState.update { it.copy(isLoading = false, isRefreshing = false) }
             }
-
-            _uiState.update { it.copy(isLoading = false, isRefreshing = false) }
         }
-    }
 
-    fun dismissError() {
-        _uiState.update { it.copy(errorMessage = null) }
-    }
-
-    fun onSearchQueryChange(query: String) {
-        _searchQuery.value = query
-    }
-
-    fun onToggleFavorite(user: User) {
-        viewModelScope.launch {
-            toggleFavoriteUseCase(user.id, !user.isFavorite)
+        fun dismissError() {
+            _uiState.update { it.copy(errorMessageRes = null) }
         }
-    }
 
-    private fun filterUsers(users: List<User>, query: String): List<User> {
-        val trimmed = query.trim()
-        if (trimmed.isEmpty()) return users
-        return users.filter { user ->
-            user.name.contains(trimmed, ignoreCase = true) ||
-                user.username.contains(trimmed, ignoreCase = true) ||
-                user.email.contains(trimmed, ignoreCase = true)
+        fun onSearchQueryChange(query: String) {
+            searchQueryFlow.value = query
         }
+
+        fun onSortOrderChange(sortOrder: UserSortOrder) {
+            sortOrderFlow.value = sortOrder
+        }
+
+        fun onFavoritesOnlyChange(favoritesOnly: Boolean) {
+            favoritesOnlyFlow.value = favoritesOnly
+        }
+
+        fun onToggleFavorite(user: User) {
+            viewModelScope.launch {
+                toggleFavoriteUseCase(user.id, !user.isFavorite)
+            }
+        }
+
+        /** Search, favorites filter, and sort applied together, all client-side (the data set is tiny). */
+        private fun visibleUsers(
+            users: List<User>,
+            query: String,
+            sortOrder: UserSortOrder,
+            favoritesOnly: Boolean,
+        ): List<User> {
+            val matching =
+                filterUsers(users, query)
+                    .let { if (favoritesOnly) it.filter(User::isFavorite) else it }
+            return when (sortOrder) {
+                UserSortOrder.NAME ->
+                    matching.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.displayName })
+                UserSortOrder.USERNAME ->
+                    matching.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.username })
+                UserSortOrder.COMPANY ->
+                    matching.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.company })
+            }
+        }
+
+        /** Bundles the four [combine] sources so the collector can destructure them by name. */
+        private data class ListControls(
+            val users: List<User>,
+            val query: String,
+            val sortOrder: UserSortOrder,
+            val favoritesOnly: Boolean,
+        )
     }
-}

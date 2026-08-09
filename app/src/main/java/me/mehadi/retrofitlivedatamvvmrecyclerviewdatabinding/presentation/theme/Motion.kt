@@ -5,10 +5,10 @@ import androidx.compose.animation.core.Easing
 
 /** Animation duration tokens (ms), following the Material 3 motion scale. */
 object MotionDuration {
-    const val Short = 150
-    const val Medium = 300
-    const val Long = 450
-    const val ExtraLong = 600
+    const val SHORT = 150
+    const val MEDIUM = 300
+    const val LONG = 450
+    const val EXTRA_LONG = 600
 }
 
 /** Material 3 easing curves. Prefer Standard for small/utility motion, Emphasized for hero motion. */

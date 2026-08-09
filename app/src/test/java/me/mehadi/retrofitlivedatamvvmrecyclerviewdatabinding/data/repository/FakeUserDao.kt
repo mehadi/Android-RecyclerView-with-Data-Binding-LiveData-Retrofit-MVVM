@@ -8,21 +8,20 @@ import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.data.local.UserEnti
 
 /** In-memory stand-in for Room; [UserDao.replaceAll]'s default transaction body runs unchanged. */
 class FakeUserDao : UserDao {
-
     private val usersFlow = MutableStateFlow<List<UserEntity>>(emptyList())
 
     override fun observeUsers(): Flow<List<UserEntity>> = usersFlow
 
-    override fun observeUserById(id: Int): Flow<UserEntity?> =
-        usersFlow.map { users -> users.find { it.id == id } }
+    override fun observeUserById(id: Int): Flow<UserEntity?> = usersFlow.map { users -> users.find { it.id == id } }
 
-    override fun observeFavoriteUsers(): Flow<List<UserEntity>> =
-        usersFlow.map { users -> users.filter { it.isFavorite } }
+    override fun observeFavoriteUsers(): Flow<List<UserEntity>> = usersFlow.map { users -> users.filter { it.isFavorite } }
 
-    override suspend fun getFavoriteIds(): List<Int> =
-        usersFlow.value.filter { it.isFavorite }.map { it.id }
+    override suspend fun getFavoriteIds(): List<Int> = usersFlow.value.filter { it.isFavorite }.map { it.id }
 
-    override suspend fun setFavorite(id: Int, isFavorite: Boolean) {
+    override suspend fun setFavorite(
+        id: Int,
+        isFavorite: Boolean,
+    ) {
         usersFlow.value = usersFlow.value.map { if (it.id == id) it.copy(isFavorite = isFavorite) else it }
     }
 

@@ -6,8 +6,10 @@ import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.repository.U
 import javax.inject.Inject
 
 /** Observes the cached user list; works offline since it never touches the network. */
-class ObserveUsersUseCase @Inject constructor(
-    private val repository: UserRepository,
-) {
-    operator fun invoke(): Flow<List<User>> = repository.observeUsers()
-}
+class ObserveUsersUseCase
+    @Inject
+    constructor(
+        private val repository: UserRepository,
+    ) {
+        operator fun invoke(): Flow<List<User>> = repository.observeUsers()
+    }

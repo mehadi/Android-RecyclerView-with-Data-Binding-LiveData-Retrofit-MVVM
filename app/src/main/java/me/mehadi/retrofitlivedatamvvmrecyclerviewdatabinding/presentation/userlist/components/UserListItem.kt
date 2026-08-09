@@ -40,23 +40,26 @@ fun UserListItem(
     modifier: Modifier = Modifier,
 ) {
     val openDetailsLabel = stringResource(R.string.open_user_details, user.displayName)
-    val favoriteLabel = stringResource(
-        if (user.isFavorite) R.string.remove_from_favorites else R.string.add_to_favorites,
-        user.displayName,
-    )
+    val favoriteLabel =
+        stringResource(
+            if (user.isFavorite) R.string.remove_from_favorites else R.string.add_to_favorites,
+            user.displayName,
+        )
 
     Card(
         onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .semantics { contentDescription = openDetailsLabel },
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .semantics { contentDescription = openDetailsLabel },
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Spacing.md),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(Spacing.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             UserAvatar(initials = user.initials, size = 52.dp)
@@ -114,11 +117,12 @@ fun UserListItem(
                 Icon(
                     imageVector = if (user.isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
                     contentDescription = favoriteLabel,
-                    tint = if (user.isFavorite) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
+                    tint =
+                        if (user.isFavorite) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
                 )
             }
 

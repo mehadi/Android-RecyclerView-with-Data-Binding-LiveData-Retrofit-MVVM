@@ -17,52 +17,53 @@ import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.usecase.Refr
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository,
-    private val clearCacheUseCase: ClearCacheUseCase,
-    private val refreshUsersUseCase: RefreshUsersUseCase,
-) : ViewModel() {
+class SettingsViewModel
+    @Inject
+    constructor(
+        private val userPreferencesRepository: UserPreferencesRepository,
+        private val clearCacheUseCase: ClearCacheUseCase,
+        private val refreshUsersUseCase: RefreshUsersUseCase,
+    ) : ViewModel() {
+        private val _uiState = MutableStateFlow(SettingsUiState(appVersion = BuildConfig.VERSION_NAME))
+        val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(SettingsUiState(appVersion = BuildConfig.VERSION_NAME))
-    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            combine(
-                userPreferencesRepository.themeMode,
-                userPreferencesRepository.dynamicColorEnabled,
-            ) { themeMode, dynamicColorEnabled -> themeMode to dynamicColorEnabled }
-                .collect { (themeMode, dynamicColorEnabled) ->
-                    _uiState.update {
-                        it.copy(themeMode = themeMode, dynamicColorEnabled = dynamicColorEnabled)
+        init {
+            viewModelScope.launch {
+                combine(
+                    userPreferencesRepository.themeMode,
+                    userPreferencesRepository.dynamicColorEnabled,
+                ) { themeMode, dynamicColorEnabled -> themeMode to dynamicColorEnabled }
+                    .collect { (themeMode, dynamicColorEnabled) ->
+                        _uiState.update {
+                            it.copy(themeMode = themeMode, dynamicColorEnabled = dynamicColorEnabled)
+                        }
                     }
-                }
+            }
+        }
+
+        fun setThemeMode(themeMode: ThemeMode) {
+            viewModelScope.launch { userPreferencesRepository.setThemeMode(themeMode) }
+        }
+
+        fun setDynamicColorEnabled(enabled: Boolean) {
+            viewModelScope.launch { userPreferencesRepository.setDynamicColorEnabled(enabled) }
+        }
+
+        fun onClearCacheClick() {
+            _uiState.update { it.copy(showClearCacheConfirmation = true) }
+        }
+
+        fun onClearCacheDismiss() {
+            _uiState.update { it.copy(showClearCacheConfirmation = false) }
+        }
+
+        /** Wipes the local cache, then immediately re-fetches from the network so the list isn't left empty. */
+        fun onClearCacheConfirm() {
+            _uiState.update { it.copy(showClearCacheConfirmation = false, isClearingCache = true) }
+            viewModelScope.launch {
+                clearCacheUseCase()
+                refreshUsersUseCase()
+                _uiState.update { it.copy(isClearingCache = false) }
+            }
         }
     }
-
-    fun setThemeMode(themeMode: ThemeMode) {
-        viewModelScope.launch { userPreferencesRepository.setThemeMode(themeMode) }
-    }
-
-    fun setDynamicColorEnabled(enabled: Boolean) {
-        viewModelScope.launch { userPreferencesRepository.setDynamicColorEnabled(enabled) }
-    }
-
-    fun onClearCacheClick() {
-        _uiState.update { it.copy(showClearCacheConfirmation = true) }
-    }
-
-    fun onClearCacheDismiss() {
-        _uiState.update { it.copy(showClearCacheConfirmation = false) }
-    }
-
-    /** Wipes the local cache, then immediately re-fetches from the network so the list isn't left empty. */
-    fun onClearCacheConfirm() {
-        _uiState.update { it.copy(showClearCacheConfirmation = false, isClearingCache = true) }
-        viewModelScope.launch {
-            clearCacheUseCase()
-            refreshUsersUseCase()
-            _uiState.update { it.copy(isClearingCache = false) }
-        }
-    }
-}

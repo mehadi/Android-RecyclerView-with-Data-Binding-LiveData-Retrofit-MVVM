@@ -18,32 +18,34 @@ private val Context.userPreferencesDataStore by preferencesDataStore(name = "use
  * primitives/strings — enum parsing and defaults live in the repository that consumes this.
  */
 @Singleton
-class UserPreferencesDataSource @Inject constructor(
-    @ApplicationContext private val context: Context,
-) {
-    private object Keys {
-        val THEME_MODE = stringPreferencesKey("theme_mode")
-        val DYNAMIC_COLOR_ENABLED = booleanPreferencesKey("dynamic_color_enabled")
-        val ONBOARDING_SEEN = booleanPreferencesKey("onboarding_seen")
+class UserPreferencesDataSource
+    @Inject
+    constructor(
+        @ApplicationContext private val context: Context,
+    ) {
+        private object Keys {
+            val THEME_MODE = stringPreferencesKey("theme_mode")
+            val DYNAMIC_COLOR_ENABLED = booleanPreferencesKey("dynamic_color_enabled")
+            val ONBOARDING_SEEN = booleanPreferencesKey("onboarding_seen")
+        }
+
+        val themeMode: Flow<String?> = context.userPreferencesDataStore.data.map { it[Keys.THEME_MODE] }
+
+        val dynamicColorEnabled: Flow<Boolean?> =
+            context.userPreferencesDataStore.data.map { it[Keys.DYNAMIC_COLOR_ENABLED] }
+
+        val onboardingSeen: Flow<Boolean?> =
+            context.userPreferencesDataStore.data.map { it[Keys.ONBOARDING_SEEN] }
+
+        suspend fun setThemeMode(themeMode: String) {
+            context.userPreferencesDataStore.edit { it[Keys.THEME_MODE] = themeMode }
+        }
+
+        suspend fun setDynamicColorEnabled(enabled: Boolean) {
+            context.userPreferencesDataStore.edit { it[Keys.DYNAMIC_COLOR_ENABLED] = enabled }
+        }
+
+        suspend fun setOnboardingSeen(seen: Boolean) {
+            context.userPreferencesDataStore.edit { it[Keys.ONBOARDING_SEEN] = seen }
+        }
     }
-
-    val themeMode: Flow<String?> = context.userPreferencesDataStore.data.map { it[Keys.THEME_MODE] }
-
-    val dynamicColorEnabled: Flow<Boolean?> =
-        context.userPreferencesDataStore.data.map { it[Keys.DYNAMIC_COLOR_ENABLED] }
-
-    val onboardingSeen: Flow<Boolean?> =
-        context.userPreferencesDataStore.data.map { it[Keys.ONBOARDING_SEEN] }
-
-    suspend fun setThemeMode(themeMode: String) {
-        context.userPreferencesDataStore.edit { it[Keys.THEME_MODE] = themeMode }
-    }
-
-    suspend fun setDynamicColorEnabled(enabled: Boolean) {
-        context.userPreferencesDataStore.edit { it[Keys.DYNAMIC_COLOR_ENABLED] = enabled }
-    }
-
-    suspend fun setOnboardingSeen(seen: Boolean) {
-        context.userPreferencesDataStore.edit { it[Keys.ONBOARDING_SEEN] = seen }
-    }
-}

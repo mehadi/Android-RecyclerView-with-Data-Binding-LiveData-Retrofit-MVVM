@@ -21,7 +21,6 @@ import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.presentation.theme.
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     /**
      * Mirrors [MainActivityViewModel.uiState] so the splash screen's keep-on-screen condition
      * below (which is polled outside of composition, on every pre-draw pass) can read it. A
@@ -47,19 +46,21 @@ class MainActivity : ComponentActivity() {
             val readyState = currentState as? MainActivityUiState.Ready
             if (readyState != null) {
                 UsersAppTheme(
-                    darkTheme = when (readyState.themeMode) {
-                        ThemeMode.SYSTEM -> isSystemInDarkTheme()
-                        ThemeMode.LIGHT -> false
-                        ThemeMode.DARK -> true
-                    },
+                    darkTheme =
+                        when (readyState.themeMode) {
+                            ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                            ThemeMode.LIGHT -> false
+                            ThemeMode.DARK -> true
+                        },
                     dynamicColor = readyState.dynamicColorEnabled,
                 ) {
                     AppNavHost(
-                        startDestination = if (readyState.onboardingSeen) {
-                            Destinations.USER_LIST
-                        } else {
-                            Destinations.ONBOARDING
-                        },
+                        startDestination =
+                            if (readyState.onboardingSeen) {
+                                Destinations.USER_LIST
+                            } else {
+                                Destinations.ONBOARDING
+                            },
                     )
                 }
             }

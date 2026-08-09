@@ -7,7 +7,6 @@ import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.model.User
 import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.repository.UserRepository
 
 class FakeUserRepository : UserRepository {
-
     private val usersFlow = MutableStateFlow<List<User>>(emptyList())
 
     /** What [refresh] should return; on success, [usersAfterRefresh] is published to observers. */
@@ -16,11 +15,9 @@ class FakeUserRepository : UserRepository {
 
     override fun observeUsers(): Flow<List<User>> = usersFlow
 
-    override fun observeUser(id: Int): Flow<User?> =
-        usersFlow.map { users -> users.find { it.id == id } }
+    override fun observeUser(id: Int): Flow<User?> = usersFlow.map { users -> users.find { it.id == id } }
 
-    override fun observeFavoriteUsers(): Flow<List<User>> =
-        usersFlow.map { users -> users.filter { it.isFavorite } }
+    override fun observeFavoriteUsers(): Flow<List<User>> = usersFlow.map { users -> users.filter { it.isFavorite } }
 
     override suspend fun refresh(): Result<Unit> {
         if (refreshResult.isSuccess) {
@@ -29,7 +26,10 @@ class FakeUserRepository : UserRepository {
         return refreshResult
     }
 
-    override suspend fun toggleFavorite(id: Int, isFavorite: Boolean) {
+    override suspend fun toggleFavorite(
+        id: Int,
+        isFavorite: Boolean,
+    ) {
         usersFlow.value = usersFlow.value.map { if (it.id == id) it.copy(isFavorite = isFavorite) else it }
     }
 

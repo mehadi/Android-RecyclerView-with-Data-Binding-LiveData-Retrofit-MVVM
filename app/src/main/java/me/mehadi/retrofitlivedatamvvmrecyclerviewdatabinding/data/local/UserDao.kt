@@ -21,7 +21,10 @@ interface UserDao {
     suspend fun getFavoriteIds(): List<Int>
 
     @Query("UPDATE users SET isFavorite = :isFavorite WHERE id = :id")
-    suspend fun setFavorite(id: Int, isFavorite: Boolean)
+    suspend fun setFavorite(
+        id: Int,
+        isFavorite: Boolean,
+    )
 
     @Upsert
     suspend fun upsertAll(users: List<UserEntity>)

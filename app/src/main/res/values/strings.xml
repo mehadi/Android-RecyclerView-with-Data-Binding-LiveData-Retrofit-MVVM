@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Users App</string>
     <string name="empty_state_title">No users found</string>
+    <string name="error_no_connection">No internet connection. Showing the last saved list.</string>
+    <string name="error_timeout">The request timed out. Please try again.</string>
+    <string name="error_server">The server had a problem. Please try again later.</string>
+    <string name="error_refresh_generic">Couldn\'t refresh users. Showing the last saved list.</string>
     <string name="empty_state_message">Pull down to refresh or check your connection</string>
     <string name="retry">Retry</string>
 
@@ -11,12 +15,20 @@
     <string name="phone_icon_label">Phone</string>
     <string name="website_icon_label">Website</string>
     <string name="company_icon_label">Company</string>
-    <string name="email_user">Email %1$s</string>
     <string name="user_not_found">This user could not be found.</string>
 
     <string name="user_detail_section_contact">Contact</string>
     <string name="user_detail_section_web">Web</string>
     <string name="user_detail_section_company">Company</string>
+    <string name="user_detail_section_address">Address</string>
+    <string name="location_icon_label">Location</string>
+    <string name="detail_share">Share %1$s</string>
+    <string name="detail_add_to_contacts">Add to contacts</string>
+    <string name="detail_posts_header">Posts (%1$d)</string>
+    <string name="detail_todos_header">Todos (%1$d done of %2$d)</string>
+    <string name="detail_albums_header">Albums (%1$d)</string>
+    <string name="detail_todo_completed">Completed</string>
+    <string name="detail_todo_not_completed">Not completed</string>
 
     <string name="add_to_favorites">Add %1$s to favorites</string>
     <string name="remove_from_favorites">Remove %1$s from favorites</string>
@@ -24,6 +36,14 @@
     <string name="search_users_clear">Clear search</string>
     <string name="search_no_results_title">No matches</string>
     <string name="search_no_results_message">No users match \"%1$s\". Try a different search.</string>
+
+    <string name="sort_filter_menu">Sort and filter</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_username">Username</string>
+    <string name="sort_by_company">Company</string>
+    <string name="filter_favorites_only">Favorites only</string>
+    <string name="favorites_filter_empty_message">Tap the star on a user to add them to your favorites.</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_section_appearance">Appearance</string>
@@ -61,6 +81,8 @@
 
     <string name="favorites_title">Favorites</string>
     <string name="favorites_empty_title">No favorites yet</string>
-    <string name="favorites_empty_message">Tap the heart on someone\'s profile to keep them handy here.</string>
+    <string name="favorites_empty_message">Tap the star on someone\'s profile to keep them handy here.</string>
     <string name="favorites_browse_button">Browse people</string>
+    <string name="favorites_removed_message">Removed from favorites</string>
+    <string name="favorites_undo">Undo</string>
 </resources>

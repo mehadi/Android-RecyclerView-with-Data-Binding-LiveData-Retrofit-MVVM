@@ -4,8 +4,13 @@ import me.mehadi.retrofitlivedatamvvmrecyclerviewdatabinding.domain.repository.U
 import javax.inject.Inject
 
 /** Flips the favorite flag for a single user in the cache. */
-class ToggleFavoriteUseCase @Inject constructor(
-    private val repository: UserRepository,
-) {
-    suspend operator fun invoke(id: Int, isFavorite: Boolean) = repository.toggleFavorite(id, isFavorite)
-}
+class ToggleFavoriteUseCase
+    @Inject
+    constructor(
+        private val repository: UserRepository,
+    ) {
+        suspend operator fun invoke(
+            id: Int,
+            isFavorite: Boolean,
+        ) = repository.toggleFavorite(id, isFavorite)
+    }

@@ -17,7 +17,10 @@ interface UserRepository {
 
     suspend fun refresh(): Result<Unit>
 
-    suspend fun toggleFavorite(id: Int, isFavorite: Boolean)
+    suspend fun toggleFavorite(
+        id: Int,
+        isFavorite: Boolean,
+    )
 
     suspend fun clearCache()
 }
